@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from utils.api_requests import get_league_standings, get_player_summary
+import requests
+from utils.api_requests import get_league_standings, get_player_summary, get_current_gameweek, get_gameweek_points
 
 # --- Page Config ---
 st.set_page_config(page_title="Overall League Table", layout="wide")
@@ -16,72 +17,106 @@ st.title("General Discussions Standings")
 
 standings = league_data['standings']['results'] if league_data and league_data['standings']['results'] else None
 
-if standings:
-    rows = []
-    for team in standings:
-        entry_id = team['entry']
-        player_data = get_player_summary(entry_id)
-        overall_rank = player_data.get("summary_overall_rank", "N/A") if player_data else "N/A"
+if not standings:
+    st.error("❌ Unable to retrieve live league data. Please check your connection or try again later.")
+    st.stop()
 
-        rows.append({
-            "Rank": team['rank'],
-            "Team Name": team['entry_name'],
-            "Manager": team['player_name'],
-            "Points": team['total'],
-            "Overall Rank": overall_rank
-        })
+# --- Load FPL Player & Team Metadata ---
+players_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
+players_response = requests.get(players_url)
+players_data = players_response.json()
 
-    df = pd.DataFrame(rows)
-else:
-    st.warning("Live data not available. Using mock data for design purposes.")
-    df = pd.DataFrame([
-        {
-            "Rank": 1,
-            "Team Name": "Cesc, Drogs and Ashley Cole",
-            "Manager": "Liam Hennigan",
-            "Points": 812,
-            "Overall Rank": 12345
-        },
-        {
-            "Rank": 2,
-            "Team Name": "iniesta fc",
-            "Manager": "Art Moore",
-            "Points": 798,
-            "Overall Rank": 23456
-        },
-        {
-            "Rank": 3,
-            "Team Name": "Beamos",
-            "Manager": "Adam Beamish",
-            "Points": 790,
-            "Overall Rank": 34567
-        }
-    ])
-
-# --- Display Table Without Index ---
-st.dataframe(df, use_container_width=True, hide_index=True)
-
-# --- Select Manager to View Team ---
-selected_manager = st.selectbox("Select a manager to view their team", df["Manager"])
-
-# Find entry ID from standings or mock data
-if standings:
-    selected_entry = next((team for team in standings if team['player_name'] == selected_manager), None)
-    entry_id = selected_entry['entry'] if selected_entry else None
-else:
-    # Fallback mock entry IDs
-    mock_entry_ids = {
-        "Liam Hennigan": 2563143,
-        "Art Moore": 6051733,
-        "Adam Beamish": 6366332
+# Map player ID to name, position, team ID, and current GW points
+player_map = {
+    player["id"]: {
+        "name": f"{player['first_name']} {player['second_name']}",
+        "position": player["element_type"],  # 1=GK, 2=DEF, 3=MID, 4=FWD
+        "team_id": player["team"],
+        "points": player["event_points"]
     }
-    entry_id = mock_entry_ids.get(selected_manager)
+    for player in players_data["elements"]
+}
 
-# Store in session and navigate
-if st.button("View Team"):
-    st.session_state.selected_entry_id = entry_id
-    st.session_state.selected_manager_name = selected_manager
-    st.switch_page("pages/Players.py")
+# Map team ID to team code (used for badge URL)
+team_map = {
+    team["id"]: team["code"]
+    for team in players_data["teams"]
+}
+
+# --- Display Each Manager's Team ---
+for team in standings:
+    entry_id = team['entry']
+    manager_name = team['player_name']
+    team_name = team['entry_name']
+    total_points = team['total']
+    rank = team['rank']
+
+    with st.expander(f"#{rank} — {manager_name} ({team_name}) — {total_points} pts"):
+        current_gw = get_current_gameweek()
+        picks_data = get_gameweek_points(entry_id, current_gw)
+        picks = picks_data.get("picks", []) if picks_data else []
+
+        if not picks:
+            st.warning("Team data not available.")
+            continue
+
+        # Organize players by position
+        formation = {1: [], 2: [], 3: [], 4: []}  # GK, DEF, MID, FWD
+        captain_id = picks_data.get("captain")
+        vice_captain_id = picks_data.get("vice_captain")
+
+        for pick in picks:
+            player_id = pick["element"]
+            info = player_map.get(player_id)
+
+            if not info:
+                continue
+
+            team_id = info["team_id"]
+            team_code = team_map.get(team_id, 1)  # fallback to 1 if missing
+            badge_url = f"https://resources.premierleague.com/premierleague/badges/t{team_code}.png"
+
+            player_card = {
+                "name": info["name"],
+                "photo": badge_url,
+                "points": info["points"],
+                "is_captain": player_id == captain_id,
+                "is_vice": player_id == vice_captain_id
+            }
+
+            if pick["position"] <= 11:
+                formation[info["position"]].append(player_card)
+
+        # Display formation
+        st.markdown(f"### Gameweek {current_gw} Team Formation")
+
+        def display_line(players, label):
+            if not players:
+                return
+            st.markdown(f"**{label}**")
+            cols = st.columns(len(players))
+            for col, player in zip(cols, players):
+                caption = player["name"]
+                if player["is_captain"]:
+                    caption += " 🧢"
+                elif player["is_vice"]:
+                    caption += " 🎩"
+                col.markdown(
+                    f"""
+                    <div style='text-align:center;'>
+                        <img src="{player['photo']}" width="80"><br>
+                        <span style='font-size:0.9em;'>{caption}</span><br>
+                        <span style='font-size:0.85em; color:gray;'>Points: {player['points']}</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+        display_line(formation[1], "🧤 Goalkeeper")
+        display_line(formation[2], "🛡️ Defenders")
+        display_line(formation[3], "🎯 Midfielders")
+        display_line(formation[4], "⚔️ Forwards")
+
 
 
 
