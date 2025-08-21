@@ -2,7 +2,58 @@ import streamlit as st
 
 # --- Page Config ---
 st.set_page_config(page_title="General Discussion League", layout="wide")
-
+people = [
+    {
+        "name": "Liam Hennigan",
+        "photo": "https://randomuser.me/api/portraits/women/44.jpg",
+        "description": "Extremely proficient in both data analytics and football, Liam is the heavy favourite to win the fantasy premier league this year. Regarded as having one of the most incredible minds in fantasy football today"
+    },
+    {
+        "name": "Art Moore",
+        "photo": "https://randomuser.me/api/portraits/men/32.jpg",
+        "description": "A die hard West Ham fan and a die hard competitor, Art's bizarre picks have him tipped to be everywhere from the top of the league to the bottom at some point this year."
+    },
+    {
+        "name": "Iarfhlaith Farrell",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "A truly deluded Liverpool fan. However, was one of the stronger competitors in the league in the last season"
+    },
+    {
+        "name": "Adam Beamish",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "Usually A midtable competitor, no outlandish picks, just solid and calculated fanasy premier league gameplay"
+    },
+    {
+        "name": "Diarmaid Phelan",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "Diarmaid was very lucky to bypass the fpl rules and rejoin the league this year having not submitted a sufficient forfeit from last year. With the pending forfeit looming over his head, can he be successfull this year?"
+    },
+    {
+        "name": "Ben Donovan",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "Ben tends to go for the differential strategy, picking a lot of uncommon players. A bold and aggressive strategy that has not worked well for him in 3 years"
+    },
+    {
+        "name": "Jack Cardoso Murphy",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "A decent competitor, has somehow managed to win some silverware in the past few years"
+    },
+    {
+        "name": "Stephen Forde",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "Exclusively watches football through twitter"
+    },
+    {
+        "name": "Sam Lilburn",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "Exclusively watches football through instagram"
+    },
+    {
+        "name": "Hugh Jeffrey",
+        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "description": "Hugh enjoys to watch football. However, He puts together truly absimal fantasy premier league squads."
+    }
+]
 # --- Home Page Content ---
 st.title("2025 General Discussions Fantasy Premier League")
 st.markdown("""
@@ -11,23 +62,17 @@ Welcome to the 2025/2026 General Discussion Fantasy Premier League.
 
 st.image("https://fantasy.premierleague.com/static/media/fpl-logo.7e5f1f7f.png", width=200)
 
-st.markdown("### 🔥 Features")
-st.markdown("""
-- 📊 View live **Overall League Standings**  
-- 📆 Analyze performance in **4-week Block Tables**  
-- 👤 Explore detailed **Player Profiles**  
-- 🧠 Plan ahead with gameweek insights and chip usage
+st.markdown("### 🔥2025/2026 Contenders🔥 ")
+St.markdown("""
+
+Liam Hennigan 
+Art Moore
+
 """)
+st.markdown("""
+Winner (overall) - Receives €10 from each player (apart from 2nd position)
+Winner (at christmas) - Receives €5 from each player (apart from 2nd position)
+winner (Each block) - Receives €2 from each player (apart from 2nd position)
 
-st.markdown("### 🚀 Get Started")
-st.markdown("Use the sidebar to navigate between pages.")
-
-# Optional: Quick Navigation Buttons (requires Streamlit 1.25+)
-if st.button("Go to Overall Table"):
-    st.switch_page("pages/1_Overall_Table.py")
-
-if st.button("Go to Block Table"):
-    st.switch_page("pages/2_Block_Table.py")
-
-if st.button("Go to Players"):
-    st.switch_page("pages/3_Players.py")
+Loser - FORFEIT (To be determined, potentially marathon or 24 hours in pub)
+""")
