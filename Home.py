@@ -63,12 +63,20 @@ Welcome to the 2025/2026 General Discussion Fantasy Premier League.
 st.image("https://fantasy.premierleague.com/static/media/fpl-logo.7e5f1f7f.png", width=200)
 
 st.markdown("### 🔥2025/2026 Contenders🔥 ")
-st.markdown("""
+st.title("👥 Meet the Team")
 
-Liam Hennigan 
-Art Moore
-
-""")
+# Display each person in an expandable row
+for person in people:
+    with st.expander(person["name"]):
+        st.markdown(
+            f"""
+            <div style='text-align:center;'>
+                <img src="{person['photo']}" width="120" style='border-radius:50%;'><br>
+                <p style='font-size:0.95em;'>{person['description']}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 st.markdown("""
 Winner (overall) - Receives €10 from each player (apart from 2nd position)
 Winner (at christmas) - Receives €5 from each player (apart from 2nd position)
