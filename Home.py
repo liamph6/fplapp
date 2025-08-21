@@ -63,7 +63,7 @@ Welcome to the 2025/2026 General Discussion Fantasy Premier League.
 st.image("https://fantasy.premierleague.com/static/media/fpl-logo.7e5f1f7f.png", width=200)
 
 st.markdown("### 🔥2025/2026 Contenders🔥 ")
-St.markdown("""
+st.markdown("""
 
 Liam Hennigan 
 Art Moore
