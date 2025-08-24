@@ -10,7 +10,7 @@ people = [
     },
     {
         "name": "Art Moore",
-        "photo": "utils/images/Art.jpg",
+        "photo": ("utils/images/Art.jpg"),
         "description": "A die hard West Ham fan and a die hard competitor, Art's bizarre picks have him tipped to be everywhere from the top of the league to the bottom at some point this year."
     },
     {
