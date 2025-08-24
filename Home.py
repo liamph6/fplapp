@@ -5,37 +5,37 @@ st.set_page_config(page_title="General Discussion League", layout="wide")
 people = [
     {
         "name": "Liam Hennigan",
-        "photo": "https://randomuser.me/api/portraits/women/44.jpg",
+        "photo": "https://randomuser.me/api/portraits/women/44.jp",
         "description": "Extremely proficient in both data analytics and football, Liam is the heavy favourite to win the fantasy premier league this year. Regarded as having one of the most incredible minds in fantasy football today"
     },
     {
         "name": "Art Moore",
-        "photo": "https://randomuser.me/api/portraits/men/32.jpg",
+        "photo": "utils/images/Art.jpg",
         "description": "A die hard West Ham fan and a die hard competitor, Art's bizarre picks have him tipped to be everywhere from the top of the league to the bottom at some point this year."
     },
     {
         "name": "Iarfhlaith Farrell",
-        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "photo": "utils/images/Iarfhlaith.jpg",
         "description": "A truly deluded Liverpool fan. However, was one of the stronger competitors in the league in the last season"
     },
     {
         "name": "Adam Beamish",
-        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "photo": "utils/images/Adam.jpg",
         "description": "Usually A midtable competitor, no outlandish picks, just solid and calculated fanasy premier league gameplay"
     },
     {
         "name": "Diarmaid Phelan",
-        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "photo": "",
         "description": "Diarmaid was very lucky to bypass the fpl rules and rejoin the league this year having not submitted a sufficient forfeit from last year. With the pending forfeit looming over his head, can he be successfull this year?"
     },
     {
         "name": "Ben Donovan",
-        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "photo": "utils/images/Ben.jpg",
         "description": "Ben tends to go for the differential strategy, picking a lot of uncommon players. A bold and aggressive strategy that has not worked well for him in 3 years"
     },
     {
         "name": "Jack Cardoso Murphy",
-        "photo": "https://randomuser.me/api/portraits/women/68.jpg",
+        "photo": "utils/images/Javk.jpg",
         "description": "A decent competitor, has somehow managed to win some silverware in the past few years"
     },
     {
