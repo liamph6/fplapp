@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
-from utils.api_requests import get_league_standings, get_player_summary, get_current_gameweek, get_gameweek_points
+from utils.api_requests import get_league_standings, get_player_summary, get_current_gameweek, get_gameweek_points, get_manager_history
 
 # --- Page Config ---
 st.set_page_config(page_title="Overall League Table", layout="wide")
