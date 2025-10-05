@@ -32,3 +32,8 @@ def get_manager_history(entry_id):
     url = f"https://fantasy.premierleague.com/api/entry/{entry_id}/history/"
     response = requests.get(url)
     return response.json()
+
+@st.cache_data(ttl=3600)
+def get_manager_team(manager_id, gw):
+    url = f"{BASE_URL}/entry/{manager_id}/event/{gw}/picks/"
+    return requests.get(url).json()
