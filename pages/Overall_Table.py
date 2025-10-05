@@ -125,6 +125,14 @@ def get_player_data():
     url = f"{BASE_URL}/bootstrap-static/"
     return requests.get(url).json()['elements']
 
+def get_player_gw_data(gw):
+    url = f"{BASE_URL}/event/{gw}/live/"
+    return requests.get(url).json()['elements']
+
+def get_player_points_map(gw):
+    gw_data = get_player_gw_data(gw)
+    return {p['id']: p['stats']['total_points'] for p in gw_data}
+
 def get_player_name_map():
     players = get_player_data()
     return {p['id']: f"{p['first_name']} {p['second_name']}" for p in players}
@@ -148,19 +156,23 @@ def find_best_gameweek(LEAGUE_ID):
 def display_team(manager_id, gw):
     picks = get_manager_team(manager_id, gw)
     player_map = get_player_name_map()
+    points_map = get_player_points_map(gw)
 
     st.subheader(f"Gameweek {gw} Team")
     st.write(f"Chips used: {picks.get('active_chip', 'None')}")
-    
 
     team_data = []
     for pick in picks['picks']:
-        player_name = player_map.get(pick['element'], "Unknown")
+        player_id = pick['element']
+        player_name = player_map.get(player_id, "Unknown")
+        base_points = points_map.get(player_id, 0)
+        total_points = base_points * pick['multiplier']
+
         team_data.append({
             "Player": player_name,
             "Is Captain": pick['is_captain'],
             "Is Vice": pick['is_vice_captain'],
-            "Multiplier": pick['multiplier']
+            "Points": total_points
         })
 
     df = pd.DataFrame(team_data)
