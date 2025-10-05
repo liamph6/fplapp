@@ -9,6 +9,10 @@ st.set_page_config(page_title="Overall League Table", layout="wide")
 # --- League ID ---
 LEAGUE_ID = 888020
 
+BASE_URL = "https://fantasy.premierleague.com/api"
+
+url = f"{BASE_URL}/bootstrap-static/"
+
 # --- Fetch League Data ---
 league_data = get_league_standings(LEAGUE_ID)
 
@@ -116,6 +120,10 @@ for team in standings:
         display_line(formation[2], "🛡️ Defenders")
         display_line(formation[3], "🎯 Midfielders")
         display_line(formation[4], "⚔️ Forwards")
+
+def get_player_data():
+    url = f"{BASE_URL}/bootstrap-static/"
+    return requests.get(url).json()['elements']
 
 def get_player_name_map():
     players = get_player_data()
