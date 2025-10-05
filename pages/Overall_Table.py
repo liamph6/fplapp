@@ -117,6 +117,51 @@ for team in standings:
         display_line(formation[3], "🎯 Midfielders")
         display_line(formation[4], "⚔️ Forwards")
 
+def find_best_gameweek(league_id):
+    standings = get_league_standings(league_id)['standings']['results']
+    best_score = 0
+    best_entry = None
+    best_gw = None
+
+    for manager in standings:
+        history = get_manager_history(manager['entry'])['current']
+        for gw_data in history:
+            if gw_data['points'] > best_score:
+                best_score = gw_data['points']
+                best_entry = manager['entry']
+                best_gw = gw_data['event']
+
+    return best_entry, best_gw, best_score
+
+def display_team(manager_id, gw):
+    picks = get_manager_team(manager_id, gw)
+    player_map = get_player_name_map()
+
+    st.subheader(f"Gameweek {gw} Team")
+    st.write(f"Chips used: {picks.get('active_chip', 'None')}")
+    st.write(f"Captain ID: {picks['picks'][0]['captain']}")
+
+    team_data = []
+    for pick in picks['picks']:
+        player_name = player_map.get(pick['element'], "Unknown")
+        team_data.append({
+            "Player": player_name,
+            "Is Captain": pick['is_captain'],
+            "Is Vice": pick['is_vice_captain'],
+            "Multiplier": pick['multiplier']
+        })
+
+    df = pd.DataFrame(team_data)
+    st.dataframe(df)
+
+# Streamlit UI
+st.title("Top Gameweek so far")
+
+with st.spinner("Fetching data..."):
+    manager_id, gw, score = find_best_gameweek(LEAGUE_ID)
+    st.success(f"Best Gameweek: GW {gw} by Manager {manager_id} with {score} points")
+    display_team(manager_id, gw)
+
 
 
 
