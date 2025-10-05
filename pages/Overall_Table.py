@@ -117,6 +117,10 @@ for team in standings:
         display_line(formation[3], "🎯 Midfielders")
         display_line(formation[4], "⚔️ Forwards")
 
+def get_player_name_map():
+    players = get_player_data()
+    return {p['id']: f"{p['first_name']} {p['second_name']}" for p in players}
+
 def find_best_gameweek(LEAGUE_ID):
     standings = get_league_standings(LEAGUE_ID)['standings']['results']
     best_score = 0
