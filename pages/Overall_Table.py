@@ -151,7 +151,7 @@ def display_team(manager_id, gw):
 
     st.subheader(f"Gameweek {gw} Team")
     st.write(f"Chips used: {picks.get('active_chip', 'None')}")
-    st.write(f"Captain ID: {picks['picks'][0]['captain']}")
+    
 
     team_data = []
     for pick in picks['picks']:
