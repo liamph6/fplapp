@@ -117,8 +117,8 @@ for team in standings:
         display_line(formation[3], "🎯 Midfielders")
         display_line(formation[4], "⚔️ Forwards")
 
-def find_best_gameweek(league_id):
-    standings = get_league_standings(league_id)['standings']['results']
+def find_best_gameweek(LEAGUE_ID):
+    standings = get_league_standings(LEAGUE_ID)['standings']['results']
     best_score = 0
     best_entry = None
     best_gw = None
