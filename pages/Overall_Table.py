@@ -133,6 +133,23 @@ def get_player_points_map(gw):
     gw_data = get_player_gw_data(gw)
     return {p['id']: p['stats']['total_points'] for p in gw_data}
 
+
+def get_player_info_map():
+    players = get_player_data()
+    return {
+        p['id']: {
+            "name": f"{p['first_name']} {p['second_name']}",
+            "position": p['element_type'],  # 1: GK, 2: DEF, 3: MID, 4: FWD
+            "team_id": p['team']
+        }
+        for p in players
+    }
+
+def get_team_code_map():
+    url = f"{BASE_URL}/bootstrap-static/"
+    teams = requests.get(url).json()['teams']
+    return {team['id']: team['code'] for team in teams}
+
 def get_player_name_map():
     players = get_player_data()
     return {p['id']: f"{p['first_name']} {p['second_name']}" for p in players}
@@ -154,39 +171,71 @@ def find_best_gameweek(LEAGUE_ID):
     return best_entry, best_gw, best_score
 
 def display_team(manager_id, gw):
-    picks = get_manager_team(manager_id, gw)
-    player_map = get_player_name_map()
+    picks_data = get_manager_team(manager_id, gw)
+    picks = picks_data.get("picks", []) if picks_data else []
+    if not picks:
+        st.warning("Team data not available.")
+        return
+
+    player_info_map = get_player_info_map()
+    team_code_map = get_team_code_map()
     points_map = get_player_points_map(gw)
 
-    st.subheader(f"Gameweek {gw} Team")
-    st.write(f"Chips used: {picks.get('active_chip', 'None')}")
+    captain_id = next((p['element'] for p in picks if p['is_captain']), None)
+    vice_captain_id = next((p['element'] for p in picks if p['is_vice_captain']), None)
 
-    team_data = []
-    for pick in picks['picks']:
+    formation = {1: [], 2: [], 3: [], 4: []}  # GK, DEF, MID, FWD
+
+    for pick in picks:
         player_id = pick['element']
-        player_name = player_map.get(player_id, "Unknown")
+        info = player_info_map.get(player_id)
+        if not info:
+            continue
+
+        team_code = team_code_map.get(info['team_id'], 1)
+        badge_url = f"https://resources.premierleague.com/premierleague/badges/t{team_code}.png"
         base_points = points_map.get(player_id, 0)
         total_points = base_points * pick['multiplier']
 
-        team_data.append({
-            "Player": player_name,
-            "Is Captain": pick['is_captain'],
-            "Is Vice": pick['is_vice_captain'],
-            "Points": total_points
-        })
+        player_card = {
+            "name": info['name'],
+            "photo": badge_url,
+            "points": total_points,
+            "is_captain": player_id == captain_id,
+            "is_vice": player_id == vice_captain_id
+        }
 
-    df = pd.DataFrame(team_data)
-    st.dataframe(df)
+        if pick["position"] <= 11:
+            formation[info["position"]].append(player_card)
 
-# Streamlit UI
-st.title("Top Gameweek so far")
+    st.markdown(f"### Gameweek {gw} Team Formation")
+    st.write(f"Chips used: {picks_data.get('active_chip', 'None')}")
 
-with st.spinner("Fetching data..."):
-    manager_id, gw, score = find_best_gameweek(LEAGUE_ID)
-    st.success(f"Best Gameweek: GW {gw} by Manager {manager_id} with {score} points")
-    display_team(manager_id, gw)
+    def display_line(players, label):
+        if not players:
+            return
+        st.markdown(f"**{label}**")
+        cols = st.columns(len(players))
+        for col, player in zip(cols, players):
+            caption = player["name"]
+            if player["is_captain"]:
+                caption += " 🧢"
+            elif player["is_vice"]:
+                caption += " 🎩"
+            col.markdown(
+                f"""
+                <div style='text-align:center;'>
+                    <img src="{player['photo']}" width="80"><br>
+                    <span style='font-size:0.9em;'>{caption}</span><br>
+                    <span style='font-size:0.85em; color:gray;'>Points: {player['points']}</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-
-
+    display_line(formation[1], "🧤 Goalkeeper")
+    display_line(formation[2], "🛡️ Defenders")
+    display_line(formation[3], "🎯 Midfielders")
+    display_line(formation[4], "⚔️ Forwards")
 
 
