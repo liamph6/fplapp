@@ -22,17 +22,18 @@ def get_entry_history(entry_id):
 
 
 def load_all_league_entries(league_id):
-    """Load all managers from a classic league"""
     entries = []
     page = 1
 
     while True:
         data = get_league_standings(league_id, page)
+
         results = data["standings"]["results"]
         entries.extend(results)
 
-        if page >= data["standings"]["total_pages"]:
+        if not data["standings"]["has_next"]:
             break
+
         page += 1
 
     return entries
