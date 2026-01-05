@@ -125,5 +125,6 @@ def block_winners_page():
 
     st.caption("A block is every 4 gameweeks (1–4, 5–8, etc.)")
 
-block_winners_page()
+if __name__ == "__main__":
+    block_winners_page()
 
