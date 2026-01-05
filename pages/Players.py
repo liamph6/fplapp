@@ -124,3 +124,6 @@ def block_winners_page():
     st.dataframe(summary_df, use_container_width=True)
 
     st.caption("A block is every 4 gameweeks (1–4, 5–8, etc.)")
+
+block_winners_page()
+
